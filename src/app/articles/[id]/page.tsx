@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Image from "next/image";
 import { Post } from '@/app/_types/post';
-import { API_BASE_URL } from '@/app/_api/postApi';
+import { API_BASE_URL } from '@/app/_constants/postApi';
 
 
 export default function Article () {

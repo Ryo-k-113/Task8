@@ -4,7 +4,7 @@ import Link from "next/link";
 //import Image from "next/image";
 import { useState, useEffect } from 'react'
 import { Post } from '@/app/_types/post'
-import { API_BASE_URL } from "@/app/_api/postApi";
+import { API_BASE_URL } from "@/app/_constants/postApi";
 import './globals.css';
 
 
