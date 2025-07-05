@@ -3,28 +3,31 @@
 import Link from "next/link";
 //import Image from "next/image";
 import { useState, useEffect } from 'react'
-import { Post } from '@/app/_types/post'
-import { API_BASE_URL } from "@/app/_constants/postApi";
+import { MicroCmsPost } from '@/app/_types/MicroCmsPost'
+//import { API_BASE_URL } from "@/app/_constants/postApi";
 import './globals.css';
 
 
 
 export default function Main () {
 
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<MicroCmsPost[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
   useEffect(() => {
     const fetcher = async () => {
-      const res = await fetch(API_BASE_URL)
-      const { posts } = await res.json()
-      setPosts(posts)
+      const res = await fetch('https://kyr4a9ylw8.microcms.io/api/v1/posts', { 
+        headers: { 
+          'X-MICROCMS-API-KEY': process.env.NEXT_PUBLIC_MICROCMS_API_KEY as string,
+        },
+      })
+      const { contents } = await res.json()
+      setPosts(contents)
       setLoading(false)
+      
     }
-
     fetcher()
   }, [])
-
+ 
   if(loading){
     return <div>読み込み中...</div>;
   } 
@@ -41,7 +44,7 @@ export default function Main () {
                   <div className="flex gap-x-2 items-center">
                     {post.categories.map((category) => {
                       return(
-                        <p key={category} className="category text-sm text-fuchsia-600 border border-fuchsia-600 rounded-md p-1">{category}</p>
+                        <p key={category.id} className="category text-sm text-fuchsia-600 border border-fuchsia-600 rounded-md p-1">{category.name}</p>
                       );
                     })}
                   </div>

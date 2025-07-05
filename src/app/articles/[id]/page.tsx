@@ -2,20 +2,27 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Image from "next/image";
-import { Post } from '@/app/_types/post';
-import { API_BASE_URL } from '@/app/_constants/postApi';
+import { MicroCmsPost } from '@/app/_types/MicroCmsPost';
+//import { API_BASE_URL } from '@/app/_constants/postApi';
 
 
 export default function Article () {
   const { id } = useParams<{ id: string }>();
-  const [post, setPost] = useState<Post | null>(null);
+  const [post, setPost] = useState<MicroCmsPost | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetcher = async () => {
-      const res = await fetch(`${API_BASE_URL}/${id}`)
-      const { post } = await res.json()
-      setPost(post)
+      const res = await fetch(
+        `https://kyr4a9ylw8.microcms.io/api/v1/posts/${id}`,
+        {
+          headers: {
+            'X-MICROCMS-API-KEY': process.env.NEXT_PUBLIC_MICROCMS_API_KEY as string,
+          },
+        },
+      )
+      const data = await res.json()
+      setPost(data)
       setLoading(false)
     }
 
@@ -35,7 +42,7 @@ export default function Article () {
     <div className="container max-w-3xl mx-auto">
       <div className="articleContents mt-14 px-4">
         <div className="articleThumbnail">
-          <Image height={400} width={800} src={post.thumbnailUrl} alt="" />
+          <Image height={400} width={800} src={post.thumbnail.url} alt="" />
         </div>
         <div className="post p-4">
           <div className="flex justify-between">
@@ -43,7 +50,7 @@ export default function Article () {
             <div className="flex gap-x-2 items-center">
               {post.categories.map((category) => {
                 return(
-                  <p key={category} className="category text-sm text-fuchsia-600 border border-fuchsia-600 rounded-md p-1">{category}</p>
+                  <p key={category.id} className="category text-sm text-fuchsia-600 border border-fuchsia-600 rounded-md p-1">{category.name}</p>
                 );
               })}
             </div>
