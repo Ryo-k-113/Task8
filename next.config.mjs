@@ -6,6 +6,9 @@ const nextConfig = {
       { protocol: 'https', hostname: 'images.microcms-assets.io' },
     ],
   },
+  experimental: {
+    optimizePackageImports: ["@chakra-ui/react"],
+  },
 };
 
 export default nextConfig;

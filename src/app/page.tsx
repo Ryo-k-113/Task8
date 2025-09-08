@@ -8,11 +8,11 @@ import { MicroCmsPost } from '@/app/_types/MicroCmsPost'
 import './globals.css';
 
 
-
 export default function Main () {
 
   const [posts, setPosts] = useState<MicroCmsPost[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
   useEffect(() => {
     const fetcher = async () => {
       const res = await fetch('https://kyr4a9ylw8.microcms.io/api/v1/posts', { 
@@ -38,7 +38,7 @@ export default function Main () {
         {posts.map(post =>  {
           return(
             <li key={post.id} className="postList border border-gray-300 mt-10 pl-4 pr-12 py-4">
-              <Link href={`/articles/${post.id}`}> 
+              <Link href={`/posts/${post.id}`}> 
                 <div className="flex justify-between">
                   <p className="postDate text-gray-500 text-xs">{new Date(post.createdAt).toLocaleDateString()}</p>
                   <div className="flex gap-x-2 items-center">
