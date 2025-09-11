@@ -3,8 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-
-
 export const GET = async(
   request: NextRequest,
   { params }: { params: { id: string }}
@@ -29,7 +27,7 @@ export const PUT = async(
   { params }: { params: { id: string}}
 ) => {
   const { id } = params;
-  const { name }: UpdateCategory = await request.json();
+  const { name }  = await request.json();
 
   try {
     const category = await prisma.category.update({
