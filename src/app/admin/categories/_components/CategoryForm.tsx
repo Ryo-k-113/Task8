@@ -34,7 +34,6 @@ export const CategoryForm: React.FC<CategoryFormProps>  = ({
       <button 
         type="submit"
         className="text-sm text-white rounded-md px-4 py-2 mr-2 bg-indigo-600 hover:bg-indigo-700"
-        onClick={handleSubmit(onSubmit)}
       >
         { mode === 'new'? '作成': '更新' }
       </button>
