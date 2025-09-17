@@ -1,19 +1,19 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { useRouter, SubmitHandler } from 'next/navigation';
+import { useRouter, SubmitHandler, Controller } from 'next/navigation';
 import { useForm } from "react-hook-form";
 import { Post, Category, PostFormValues } from "@/app/_types/Post";
 import { PostForm } from '@/app/admin/posts/_components/PostForm';
 
 export default function NewPostPage () {
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { isSubmitting },
   } = useForm<PostFormValues>({
     defaultValues: {
@@ -23,17 +23,16 @@ export default function NewPostPage () {
       categories:[]
     }
   });
-
+  
 
   const onSubmit = async(data: PostFormValues) => {
-
-    const { title, content, thumbnailUrl } = data; 
+    console.log(data.categories)
     const res = await fetch('/api//admin/posts',{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({title, content, thumbnailUrl, categories}),
+      body: JSON.stringify(data),
     });
 
     //記事IDを取得
@@ -53,10 +52,9 @@ export default function NewPostPage () {
         mode ="new"
         handleSubmit={handleSubmit}
         onSubmit={onSubmit}
-        categories={categories}
-        setCategories={setCategories}
         isSubmitting={isSubmitting}
         register={register}
+        control={control}
       />
     </div>
   );

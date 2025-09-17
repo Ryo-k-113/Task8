@@ -9,7 +9,6 @@ import AdminCategories from '../../categories/page';
 
 export default function AdminPost () {
 
-  const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState<boolean>(true);
   const { id } = useParams();
   const router = useRouter();
@@ -18,19 +17,26 @@ export default function AdminPost () {
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { isSubmitting },
-  } = useForm<PostFormValues>();
+  } = useForm<PostFormValues>({
+    defaultValues: {
+      title: "",
+      content: "",
+      thumbnailUrl:"",
+      categories:[],
+    },
+  });
 
   const onSubmit = async(data: PostFormValues) => {
-    
-    const { title, content, thumbnailUrl } = data;
     await fetch(`/api/admin/posts/${id}`,{
       method: 'PUT',
       headers: {
         'Content-Type':'application/json',
       },
-      body:JSON.stringify({title,content,thumbnailUrl,categories}),
+      body:JSON.stringify(data),
     })
+    console.log(data)
     alert('記事を更新しました')
   }
   
@@ -51,12 +57,12 @@ export default function AdminPost () {
       setValue('title', post.title)
       setValue('content', post.content)
       setValue('thumbnailUrl', post.thumbnailUrl)
-      setCategories(post.postCategories.map((pc) => pc.category))
+      setValue('categories', post.postCategories.map((pc) => pc.category))
       setLoading(false)
     }
-    fetcher()
+    fetcher() 
   }, [id])
-  
+
   if(loading){
     return <div>読み込み中...</div>;
   } 
@@ -73,8 +79,7 @@ export default function AdminPost () {
         onSubmit={onSubmit}
         handleSubmit={handleSubmit}
         onDelete={handleDelete}
-        categories={categories}
-        setCategories={setCategories}
+        control={control}
       />
     </div>
   );

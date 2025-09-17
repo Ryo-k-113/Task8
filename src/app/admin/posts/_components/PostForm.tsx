@@ -1,35 +1,33 @@
 'use client'
 
-import { UseFormRegister, UseFormHandleSubmit, FieldErrors, Controller} from "react-hook-form";
+import { UseFormRegister, UseFormHandleSubmit, Controller, Control} from "react-hook-form";
 import Link from 'next/link'
 import { useState } from "react";
 import React from 'react'
 import { Category, PostFormValues } from '@/app/_types/Post'
 import { CategoriesSelect } from "./CategoriesSelect";
 
-type Props = {
+type PostFormProps = {
   mode: 'new' | 'edit'
-  categories: Category[] 
-  setCategories: (categories: Category[]) => void
   register: UseFormRegister<PostFormValues>
   handleSubmit: UseFormHandleSubmit<PostFormValues>
   onSubmit:(data: PostFormValues) => void
   isSubmitting: boolean
   onDelete?: () => void
+  control: Control<PostFormValues>
 };
 
 
-export const PostForm: React.FC<Props> = ({ 
+export const PostForm: React.FC<PostFormProps> = ({ 
   mode,
-  categories, 
-  setCategories,
   register, 
   handleSubmit, 
   onSubmit,
   isSubmitting,
   onDelete,
+  control,
 }) => {
-
+ 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
         <dl className="mb-4">
@@ -57,7 +55,7 @@ export const PostForm: React.FC<Props> = ({
             <dd className="h-full">
               <textarea 
                 id="content"  
-                rows={2}
+                rows={2}  
                 {...register("content")}
                 className="h-full w-full rounded-md border border-gray-200 p-3"  
                 disabled={isSubmitting} 
@@ -87,12 +85,23 @@ export const PostForm: React.FC<Props> = ({
               </label>
             </dt>
             <dd className="h-full">
-              <CategoriesSelect 
-                selectedCategories={categories}
-                setSelectedCategories={setCategories}
+              <Controller
+                name="categories"
+                control={control}
+                render={({ field }) => (
+                  <CategoriesSelect    
+                    registeredCategories={field.value} // 選択されたカテゴリー
+                    isSubmitting={isSubmitting} 
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+                {/* <CategoriesSelect 
+                // selectedCategories={categories}
+                // setSelectedCategories={setCategories}
                 register={register}
                 isSubmitting={isSubmitting}
-              />
+              /> */}
             </dd>
           </dl>
           <button 

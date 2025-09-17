@@ -19,5 +19,5 @@ export type  PostFormValues = {
   title: string;
   content: string;
   thumbnailUrl: string;
-  categories: string[];
+  categories: Category[];
 };

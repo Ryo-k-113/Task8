@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { useState, useEffect } from 'react'
-import { UseFormRegister } from "react-hook-form";
+import { UseFormRegister, useFormContext, useForm, Controller } from "react-hook-form";
 import { Category, PostFormValues } from '@/app/_types/Post'
 import Box from '@mui/material/Box';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -11,21 +11,21 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
 
-interface Props {
-  selectedCategories: Category[]
-  setSelectedCategories: (categories: Category[]) => void
+type Props = {
   register: UseFormRegister<PostFormValues>
   isSubmitting: boolean
-}
+  registeredCategories: Category[] 
+  onChange: (selectedCategories: Category[]) => void;
+};
 
 export const CategoriesSelect: React.FC<Props> = ({
-  selectedCategories,
-  setSelectedCategories,
-  register,
   isSubmitting,
+  registeredCategories,
+  onChange,
 }) => {
-  const [categories, setCategories] = React.useState<Category[]>([])
-    
+  const [categories, setCategories] = useState<Category[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>(registeredCategories)
+
     //セレクトボックスの選択に変更があったとき、選択されたカテゴリーを配列に追加
     const handleChange = (value: number[]) => {
       value.forEach((v: number) => {
@@ -39,8 +39,12 @@ export const CategoriesSelect: React.FC<Props> = ({
         if (!category) return
         setSelectedCategories([...selectedCategories, category])
       })
-      console.log(selectedCategories)
     }
+   
+
+    useEffect(()=>{
+      onChange(selectedCategories)
+    },[selectedCategories])
    
   //セレクトボックスに表示するカテゴリー一覧を取得
   useEffect(() => {
@@ -51,14 +55,12 @@ export const CategoriesSelect: React.FC<Props> = ({
     }
     fetcher()
   }, [])
-
   
 
   return (
     <FormControl className="w-full">
       <Select
         multiple
-        {...register("categories")}
         value={selectedCategories}
         disabled={isSubmitting}
         onChange={(e) => handleChange((e.target.value as unknown) as number[])}
