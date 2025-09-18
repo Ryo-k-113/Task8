@@ -10,9 +10,12 @@ export const Header: React.FC = () => {
         <Link href="/">Blog</Link>
       </h1>
       <nav>
-        <ul>
+        <ul className="flex gap-8">
           <li className="text-white">
             <Link href="/contact">お問い合わせ</Link>
+          </li>
+          <li className="text-white">
+            <Link href="/">ログイン</Link>
           </li>
         </ul>
       </nav>

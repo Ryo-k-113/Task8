@@ -4,7 +4,7 @@ import "./globals.css";
 import { Header } from "./_components/Header";
 
 export const metadata: Metadata = {
-  title: '8章:Next.js基礎',
+  title: '10章Next.js前半',
   description: 'ReactアプリをTypeScriptへ置き換える'
 };
 export default function RootLayout({
@@ -15,10 +15,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Header />
-        <main>
-          {children}
-        </main>
+          <Header />
+          <main>
+            {children}
+          </main>
       </body>
     </html>
   );
