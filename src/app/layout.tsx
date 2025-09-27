@@ -4,7 +4,7 @@ import "./globals.css";
 import { Header } from "./_components/Header";
 
 export const metadata: Metadata = {
-  title: '10章Next.js前半',
+  title: '11章Next.js後半',
   description: 'ReactアプリをTypeScriptへ置き換える'
 };
 export default function RootLayout({
