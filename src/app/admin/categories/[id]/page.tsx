@@ -4,13 +4,15 @@ import { useState, useEffect } from 'react'
 import { useForm, SubmitHandler, FieldValues, UseFormRegister, UseFormHandleSubmit } from 'react-hook-form';
 import { useParams, useRouter } from 'next/navigation';
 import { Category } from "@/app/_types/Post";
-import { CategoryForm } from '@/app/admin/categories/_components/CategoryForm'
+import { CategoryForm } from '@/app/admin/categories/_components/CategoryForm';
+import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
 
 export default function AdminCategory () {
   
   const [loading, setLoading] = useState<boolean>(true);
   const { id } = useParams();
   const router = useRouter();
+  const { token } = useSupabaseSession();
 
   const {
       register,
@@ -24,6 +26,7 @@ export default function AdminCategory () {
       method: 'PUT',
       headers: {
         'Content-Type':'application/json',
+        Authorization: token,
       },
       body:JSON.stringify(data),
     })
@@ -33,6 +36,9 @@ export default function AdminCategory () {
   const handleDelete = async() => {
     await fetch(`/api/admin/categories/${id}`, {
       method: 'DELETE',
+      headers: {
+        Authorization: token,
+      },
     })
     alert('カテゴリーを削除しました')
 
@@ -41,18 +47,26 @@ export default function AdminCategory () {
   }
 
   useEffect(() => {
+    if(!token) return;
+
     const fetcher = async () => {
-      const res = await fetch(`/api/admin/categories/${id}`)
+      const res = await fetch(`/api/admin/categories/${id}`,{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      })
+
       const {category} = await res.json()
       setValue('name', category.name)
       setLoading(false)
     }
     fetcher()
-  }, [id])
+  }, [id,token])
  
-  if(loading){
-    return <div>読み込み中...</div>;
-  } 
+  // if(loading){
+  //   return <div>読み込み中...</div>;
+  // } 
 
   return (
     <div className="mx-auto p-6">

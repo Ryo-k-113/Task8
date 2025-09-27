@@ -22,9 +22,9 @@ export const CategoryForm: React.FC<CategoryFormProps>  = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="mb-4">
-        <label htmlFor="title">カテゴリー名</label>
+        <label htmlFor="name">カテゴリー名</label>
         <input 
-          id='title'
+          id='name'
           type='text'
           {...register('name')}
           disabled={isSubmitting}

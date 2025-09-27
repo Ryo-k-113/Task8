@@ -1,27 +1,21 @@
 "use client"
 
 import Link from "next/link";
-//import Image from "next/image";
 import { useState, useEffect } from 'react'
-import { MicroCmsPost } from '@/app/_types/MicroCmsPost'
-//import { API_BASE_URL } from "@/app/_constants/postApi";
+import { Post } from "@/app/_types/Post";
 import './globals.css';
 
 
 export default function Main () {
 
-  const [posts, setPosts] = useState<MicroCmsPost[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetcher = async () => {
-      const res = await fetch('https://kyr4a9ylw8.microcms.io/api/v1/posts', { 
-        headers: { 
-          'X-MICROCMS-API-KEY': process.env.NEXT_PUBLIC_MICROCMS_API_KEY as string,
-        },
-      })
-      const { contents } = await res.json()
-      setPosts(contents)
+      const res = await fetch('/api/posts')
+      const { posts } = await res.json()
+      setPosts(posts)
       setLoading(false)
       
     }

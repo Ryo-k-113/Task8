@@ -2,16 +2,22 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation';
+import Image from "next/image";
 import { useForm, Controller, SubmitHandler, FieldValues, UseFormRegister, UseFormHandleSubmit, UseFormState  } from 'react-hook-form';
 import { Post, PostFormValues, Category } from "@/app/_types/Post";
 import { PostForm } from '@/app/admin/posts/_components/PostForm'
 import AdminCategories from '../../categories/page';
+import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession';
+
 
 export default function AdminPost () {
-
+  
   const [loading, setLoading] = useState<boolean>(true);
   const { id } = useParams();
   const router = useRouter();
+  const { token } = useSupabaseSession();
+  const [thumbnailImageKey, setThumbnailImageKey] = useState('')
+
 
   const {
     register,
@@ -23,26 +29,29 @@ export default function AdminPost () {
     defaultValues: {
       title: "",
       content: "",
-      thumbnailUrl:"",
+      thumbnailImageKey:"",
       categories:[],
     },
   });
 
   const onSubmit = async(data: PostFormValues) => {
-    await fetch(`/api/admin/posts/${id}`,{
+    await fetch(`/api/admin/posts/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type':'application/json',
+        Authorization: token,
       },
       body:JSON.stringify(data),
     })
-    console.log(data)
     alert('記事を更新しました')
   }
   
   const handleDelete = async() => {
     await fetch(`/api/admin/posts/${id}`, {
       method: 'DELETE',
+      headers: {
+        Authorization: token,
+      },
     })
     alert('記事を削除しました')
 
@@ -51,17 +60,25 @@ export default function AdminPost () {
   }
 
   useEffect(() => {
+    if(!token) return;
+
     const fetcher = async () => {
-      const res = await fetch(`/api/admin/posts/${id}`)
+      const res = await fetch(`/api/admin/posts/${id}`,{
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+  
+        },
+      })
       const { post }: { post: Post } = await res.json()
       setValue('title', post.title)
       setValue('content', post.content)
-      setValue('thumbnailUrl', post.thumbnailUrl)
       setValue('categories', post.postCategories.map((pc) => pc.category))
+      setThumbnailImageKey(post.thumbnailImageKey);
       setLoading(false)
     }
     fetcher() 
-  }, [id])
+  }, [id,token])
 
   if(loading){
     return <div>読み込み中...</div>;
@@ -80,6 +97,9 @@ export default function AdminPost () {
         handleSubmit={handleSubmit}
         onDelete={handleDelete}
         control={control}
+        setValue={setValue}
+        thumbnailImageKey={thumbnailImageKey}
+        setThumbnailImageKey={setThumbnailImageKey}
       />
     </div>
   );

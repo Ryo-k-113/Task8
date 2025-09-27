@@ -10,9 +10,9 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
+import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession';
 
 type Props = {
-  register: UseFormRegister<PostFormValues>
   isSubmitting: boolean
   registeredCategories: Category[] 
   onChange: (selectedCategories: Category[]) => void;
@@ -25,6 +25,7 @@ export const CategoriesSelect: React.FC<Props> = ({
 }) => {
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategories, setSelectedCategories] = useState<Category[]>(registeredCategories)
+  const { token } = useSupabaseSession();
 
     //セレクトボックスの選択に変更があったとき、選択されたカテゴリーを配列に追加
     const handleChange = (value: number[]) => {
@@ -48,13 +49,21 @@ export const CategoriesSelect: React.FC<Props> = ({
    
   //セレクトボックスに表示するカテゴリー一覧を取得
   useEffect(() => {
+    if(!token) return;
+
     const fetcher = async () => {
-      const res = await fetch('/api/admin/categories')
+      const res = await fetch('/api/admin/categories',{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      })
       const { categories } = await res.json()
       setCategories(categories)
     }
     fetcher()
-  }, [])
+    
+  }, [token])
   
 
   return (

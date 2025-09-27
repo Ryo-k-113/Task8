@@ -4,10 +4,8 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'placehold.jp' },
       { protocol: 'https', hostname: 'images.microcms-assets.io' },
+      { protocol: 'https', hostname: 'lxqldluastfohrrqylhu.supabase.co' },
     ],
-  },
-  experimental: {
-    optimizePackageImports: ["@chakra-ui/react"],
   },
 };
 

@@ -5,32 +5,38 @@ import { useRouter, SubmitHandler, Controller } from 'next/navigation';
 import { useForm } from "react-hook-form";
 import { Post, Category, PostFormValues } from "@/app/_types/Post";
 import { PostForm } from '@/app/admin/posts/_components/PostForm';
+import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession';
+import Image from "next/image";
+
 
 export default function NewPostPage () {
-  const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
-
+  const { token } = useSupabaseSession();
+  const [thumbnailImageKey, setThumbnailImageKey] = useState('')
+  
   const {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { isSubmitting },
   } = useForm<PostFormValues>({
     defaultValues: {
       title:'',
       content:'',
-      thumbnailUrl:'https://placehold.jp/800x400.png',
+      thumbnailImageKey: '',
       categories:[]
     }
   });
   
 
   const onSubmit = async(data: PostFormValues) => {
-    console.log(data.categories)
+    
     const res = await fetch('/api//admin/posts',{
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: token,
       },
       body: JSON.stringify(data),
     });
@@ -55,6 +61,9 @@ export default function NewPostPage () {
         isSubmitting={isSubmitting}
         register={register}
         control={control}
+        setValue={setValue}
+        thumbnailImageKey={thumbnailImageKey}
+        setThumbnailImageKey={setThumbnailImageKey}
       />
     </div>
   );
