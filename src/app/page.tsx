@@ -36,14 +36,14 @@ export default function Main () {
                 <div className="flex justify-between">
                   <p className="postDate text-gray-500 text-xs">{new Date(post.createdAt).toLocaleDateString()}</p>
                   <div className="flex gap-x-2 items-center">
-                    {post.categories.map((category) => {
+                    {post.postCategories.map((pc) => {
                       return(
-                        <p key={category.id} className="category text-sm text-fuchsia-600 border border-fuchsia-600 rounded-md p-1">{category.name}</p>
+                        <p key={pc.category.id} className="category text-sm text-fuchsia-600 border border-fuchsia-600 rounded-md p-1">{pc.category.name}</p>
                       );
                     })}
                   </div>
                 </div>
-                <div className="postTitle text-2xl font-medium mt-3">APIで取得した{post.title}</div>
+                <div className="postTitle text-2xl font-medium mt-3">{post.title}</div>
                 <p className="postContent mt-3 line-clamp-2" dangerouslySetInnerHTML={{ __html:post.content}} />
               </Link>
             </li>
