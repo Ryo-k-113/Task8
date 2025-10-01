@@ -1,13 +1,14 @@
 "use client"
 
-import { useState, useEffect } from 'react'
 import { useForm, SubmitHandler, FieldValues, UseFormRegister, UseFormHandleSubmit, UseFormState  } from 'react-hook-form';
 import { useParams, useRouter } from 'next/navigation';
 import { Category } from "@/app/_types/Post";
-import { CategoryForm } from '@/app/admin/categories/_components/CategoryForm'
+import { CategoryForm } from '@/app/admin/categories/_components/CategoryForm';
+import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
 
 export default function AdminNewCategory () {
   const router = useRouter();
+  const { token } = useSupabaseSession();
 
   const {
     register,
@@ -16,13 +17,13 @@ export default function AdminNewCategory () {
   } = useForm<Category>();
 
   
-
-  const onSubmit = async(data) => {
+  const onSubmit = async(data: Category) => {
 
     const res = await fetch('/api/admin/categories',{
       method: 'POST',
       headers: {
         'Content-Type':'application/json',
+        Authorization: token,
       },
       body:JSON.stringify(data),
     })

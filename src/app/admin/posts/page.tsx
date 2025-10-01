@@ -1,28 +1,18 @@
 "use client"
 
 import Link from "next/link";
-import { useState, useEffect } from 'react'
 import { Post } from "@/app/_types/Post";
+import { useDataFetch } from "@/app/admin/_hooks/useDataFetch";
 
 
 export default function AdminPosts () {
 
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const { data, error, isLoading } = useDataFetch('/api/admin/posts');
+  const posts = data?.posts || [];
 
-  useEffect(() => {
-    const fetcher = async () => {
-      const res = await fetch('/api/admin/posts')
-      const { posts } = await res.json()
-      setPosts(posts)
-      setLoading(false)
-    }
-    fetcher()
-  }, [])
- 
-  if(loading){
-    return <div>読み込み中...</div>;
-  } 
+  if (!data) { return <p>読み込み中・・・</p>; }
+  if (error) { return <p>エラー:{error.message}</p>; }
+
 
   return (
     <div className="mx-auto p-4">
@@ -33,6 +23,7 @@ export default function AdminPosts () {
         </button>
       </div>
       <ul>
+      {!isLoading && posts.length === 0 && <div>記事がありません</div>}
         {posts.map(post =>  {
           return(
             <li key={post.id} className="postList bg-white border-b border-gray-300 hover:bg-gray-300 ">

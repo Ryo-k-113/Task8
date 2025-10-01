@@ -3,7 +3,7 @@ export type Post = {
   id: number;
   title: string;
   content: string;
-  thumbnailUrl: string;
+  thumbnailImageKey: string;
   createdAt: string;
   categories: string[];
   postCategories: { category: Category }[]; 
@@ -18,6 +18,6 @@ export type Category = {
 export type  PostFormValues = {
   title: string;
   content: string;
-  thumbnailUrl: string;
+  thumbnailImageKey: string;
   categories: Category[];
 };

@@ -2,55 +2,57 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Image from "next/image";
-import { MicroCmsPost } from '@/app/_types/MicroCmsPost';
+import { supabase } from '@/utils/supabase';
+import useSWR from 'swr';
 
 
 
 export default function Article () {
   const { id } = useParams<{ id: string }>();
-  const [post, setPost] = useState<MicroCmsPost | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const fetcher = async () => {
-      const res = await fetch(
-        `https://kyr4a9ylw8.microcms.io/api/v1/posts/${id}`,
-        {
-          headers: {
-            'X-MICROCMS-API-KEY': process.env.NEXT_PUBLIC_MICROCMS_API_KEY as string,
-          },
-        },
-      )
-      const data = await res.json()
-      setPost(data)
-      setLoading(false)
+  
+  // const fetcher = (url: string): Promise<any> => fetch(url).then(res => res.json());
+  const fetcher = async (url: string) => {
+    const res = await fetch(url);
+  
+    if (!res.ok) {// レスポンスが成功でなければエラーを投げ,SWRの`error`状態が自動的に設定される
+      const error = new Error("データの取得中にエラーが発生しました");
+      throw error;
     }
+    return res.json();
+  }
+  const { data, error } = useSWR(
+    id ? `/api/posts/${id}` : null,
+    fetcher
+  );
+  console.log(data)
 
-    fetcher()
-  }, [id])
+  const post =  data ? data.post : [];
 
   
-  if(loading){
+  const thumbnailImageUrl = post.thumbnailImageKey
+    ? supabase.storage.from("post_thumbnail").getPublicUrl(post.thumbnailImageKey).data.publicUrl
+    : null;
+
+  
+  if(!data){
     return <div>読み込み中...</div>;
   } 
 
-  if(!post) {
-    return <div>記事が見つかりません</div>;
-  }
+ 
 
   return (
     <div className="container max-w-3xl mx-auto">
       <div className="articleContents mt-14 px-4">
         <div className="articleThumbnail">
-          <Image height={400} width={800} src={post.thumbnail.url} alt="" />
+          <Image height={400} width={800} src={thumbnailImageUrl} alt="" />
         </div>
         <div className="post p-4">
           <div className="flex justify-between">
             <p className="postDate text-gray-500 text-xs">{new Date(post.createdAt).toLocaleDateString()}</p>
             <div className="flex gap-x-2 items-center">
-              {post.categories.map((category) => {
+              {post.postCategories.map((pc) => {
                 return(
-                  <p key={category.id} className="category text-sm text-fuchsia-600 border border-fuchsia-600 rounded-md p-1">{category.name}</p>
+                  <p key={pc.category.id} className="category text-sm text-fuchsia-600 border border-fuchsia-600 rounded-md p-1">{pc.category.name}</p>
                 );
               })}
             </div>
