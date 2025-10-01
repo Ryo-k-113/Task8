@@ -30,7 +30,7 @@ export const useDataFetch = (url: string | null) => {
   );
   return {
     data,
-    isLoading: isSessionLoading,
+    isLoading,
     error
   }
 }
