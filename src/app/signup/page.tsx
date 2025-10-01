@@ -1,16 +1,25 @@
 'use client'
 
-import { supabase } from '@/utils/supabase' // 前の工程で作成したファイル
-import { useState } from 'react'
-import { UseFormRegister, UseFormHandleSubmit,UseFormSetValue, Controller, Control, useWatch} from "react-hook-form";
+import { supabase } from '@/utils/supabase' 
+import { NumberInputDecrementTrigger } from '@chakra-ui/react';
+import { useForm, UseFormRegister, UseFormHandleSubmit,UseFormSetValue, Controller, Control, useWatch} from "react-hook-form";
 
+type signUpForm = {
+  email: string;
+  password: string;
+};
 
 export default function Page() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const {
+      register,
+      handleSubmit,
+      reset,
+      formState: { isSubmitting }
+    } = useForm<signUpForm>();
+
+  const onSubmit = async (data: signUpForm) => {
+    const { email, password } = data;
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -22,15 +31,14 @@ export default function Page() {
     if (error) {
       alert('登録に失敗しました')
     } else {
-      setEmail('')
-      setPassword('')
+      reset();
       alert('確認メールを送信しました。')
     }
   }
 
   return (
     <div className="flex justify-center pt-[240px]">
-      <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-[400px]">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-full max-w-[400px]">
         <div>
           <label
             htmlFor="email"
@@ -40,13 +48,11 @@ export default function Page() {
           </label>
           <input
             type="email"
-            name="email"
             id="email"
+            {...register("email", {required: true})}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            disabled={isSubmitting}
             placeholder="name@company.com"
-            required
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
           />
         </div>
         <div>
@@ -58,13 +64,11 @@ export default function Page() {
           </label>
           <input
             type="password"
-            name="password"
             id="password"
+            {...register("password", {required: true})}
             placeholder="••••••••"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            required
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
+            disabled={isSubmitting}
           />
         </div>
 
