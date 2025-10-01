@@ -1,6 +1,6 @@
 'use client'
 
-import { UseFormRegister, UseFormHandleSubmit,UseFormSetValue, Controller, Control} from "react-hook-form";
+import { UseFormRegister, UseFormHandleSubmit,UseFormSetValue, Controller, Control, useWatch} from "react-hook-form";
 import Link from 'next/link'
 import { useState, useEffect} from "react";
 import React from 'react'
@@ -102,6 +102,7 @@ export const PostForm: React.FC<PostFormProps> = ({
     // onSubmitを呼び出す
     await onSubmit(postData);
   };
+ 
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
@@ -176,14 +177,13 @@ export const PostForm: React.FC<PostFormProps> = ({
                 name="categories"
                 control={control}
                 render={({ field }) => (
-                  <CategoriesSelect    
+                  <CategoriesSelect
                     registeredCategories={field.value} // 選択されたカテゴリー
                     isSubmitting={isSubmitting} 
                     onChange={field.onChange}
-                  />
+                  /> 
                 )}
               />
-              
             </dd>
           </dl>
           <button 

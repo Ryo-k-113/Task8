@@ -2,6 +2,8 @@
 
 import { supabase } from '@/utils/supabase' // 前の工程で作成したファイル
 import { useState } from 'react'
+import { UseFormRegister, UseFormHandleSubmit,UseFormSetValue, Controller, Control, useWatch} from "react-hook-form";
+
 
 export default function Page() {
   const [email, setEmail] = useState('')

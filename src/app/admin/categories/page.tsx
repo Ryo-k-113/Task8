@@ -1,37 +1,18 @@
 "use client"
 
 import Link from "next/link";
-import { useState, useEffect } from 'react'
 import { Category } from "@/app/_types/Post";
-import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession";
+import { useDataFetch } from "@/app/admin/_hooks/useDataFetch";
 
 
 export default function AdminCategories () {
-
-  const [ categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const { token } = useSupabaseSession();
-
-  useEffect(() => {
-    if(!token) return;
-
-    const fetcher = async () => {
-      const res = await fetch('/api/admin/categories',{
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-      });
-      const { categories } = await res.json()
-      setCategories(categories)
-      setLoading(false)
-    };
-    fetcher()
-  }, [token])
  
-  // if(loading){
-  //   return <div>読み込み中...</div>;
-  // } 
+  const { data, error, isLoading } = useDataFetch('/api/admin/categories');
+  const categories = data?.categories || [];
+
+  if (isLoading) { return <p>読み込み中・・・</p>; }
+  if (error) { return <p>エラー:{error.message}</p>; }
+  
 
   return (
     <div className="mx-auto p-4">
@@ -42,7 +23,7 @@ export default function AdminCategories () {
         </button>
       </div>
       <ul>
-      {!loading && categories.length === 0 && <p>カテゴリーがありません</p>}
+      {!isLoading && categories.length === 0 && <p>カテゴリーがありません</p>}
         {categories.map(category =>  {
           return(
             <li key={category.id} className="postList bg-white border-b border-gray-300 hover:bg-gray-300 ">

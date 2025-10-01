@@ -7,17 +7,17 @@ import { useForm, Controller, SubmitHandler, FieldValues, UseFormRegister, UseFo
 import { Post, PostFormValues, Category } from "@/app/_types/Post";
 import { PostForm } from '@/app/admin/posts/_components/PostForm'
 import AdminCategories from '../../categories/page';
+import { useDataFetch } from "@/app/admin/_hooks/useDataFetch";
 import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession';
 
 
 export default function AdminPost () {
   
-  const [loading, setLoading] = useState<boolean>(true);
   const { id } = useParams();
   const router = useRouter();
   const { token } = useSupabaseSession();
-  const [thumbnailImageKey, setThumbnailImageKey] = useState('')
 
+  const [thumbnailImageKey, setThumbnailImageKey] = useState('')
 
   const {
     register,
@@ -33,6 +33,20 @@ export default function AdminPost () {
       categories:[],
     },
   });
+
+  const { data, error, isLoading } = useDataFetch(
+    id ? `/api/admin/posts/${id}` : null
+  );
+
+  useEffect(() => {
+    if(!data?.post) return
+
+    setValue('title', data.post.title)
+    setValue('content', data.post.content)
+    setValue('categories', data.post.postCategories.map((pc) => pc.category))
+    setThumbnailImageKey(data.post.thumbnailImageKey);
+    
+  }, [data,setValue])
 
   const onSubmit = async(data: PostFormValues) => {
     await fetch(`/api/admin/posts/${id}`, {
@@ -59,30 +73,9 @@ export default function AdminPost () {
     router.push('/admin/posts')
   }
 
-  useEffect(() => {
-    if(!token) return;
 
-    const fetcher = async () => {
-      const res = await fetch(`/api/admin/posts/${id}`,{
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token,
-  
-        },
-      })
-      const { post }: { post: Post } = await res.json()
-      setValue('title', post.title)
-      setValue('content', post.content)
-      setValue('categories', post.postCategories.map((pc) => pc.category))
-      setThumbnailImageKey(post.thumbnailImageKey);
-      setLoading(false)
-    }
-    fetcher() 
-  }, [id,token])
-
-  if(loading){
-    return <div>読み込み中...</div>;
-  } 
+  if (!data) { return <p>読み込み中・・・</p>; }
+  if (error) { return <p>エラー:{error.message}</p>; }
 
   return (
     <div className="mx-auto p-6">

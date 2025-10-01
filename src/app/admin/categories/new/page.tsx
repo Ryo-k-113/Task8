@@ -1,6 +1,5 @@
 "use client"
 
-import { useState, useEffect } from 'react'
 import { useForm, SubmitHandler, FieldValues, UseFormRegister, UseFormHandleSubmit, UseFormState  } from 'react-hook-form';
 import { useParams, useRouter } from 'next/navigation';
 import { Category } from "@/app/_types/Post";
